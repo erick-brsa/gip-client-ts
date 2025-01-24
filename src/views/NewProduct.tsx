@@ -1,7 +1,11 @@
-import { Form, Link, useActionData } from 'react-router-dom';
+import { ActionFunctionArgs, Form, Link, useActionData } from 'react-router-dom';
+import ErrorMessage from '../components/ErrorMessage';
+import { addProduct } from '../services/ProductService';
 
-export async function action({ request }) {
+export async function action({ request } : ActionFunctionArgs) {
+
 	const data = Object.fromEntries(await request.formData());
+	
 	let error = '';
     
 	if (Object.values(data).includes('')) {
@@ -12,12 +16,14 @@ export async function action({ request }) {
         return error
     }
 
+	addProduct(data)
+
 	return {};
 }
 
 export default function NewProduct() {
 
-    const error = useActionData();
+    const error = useActionData() as string;
     console.log(error);
     
 
@@ -34,6 +40,8 @@ export default function NewProduct() {
 					Volver a Productos
 				</Link>
 			</div>
+
+			{error && <ErrorMessage>{error}</ErrorMessage>}
 
 			<Form className="mt-10" method="POST" action="">
 				<div className="mb-4">
