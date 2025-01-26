@@ -1,7 +1,16 @@
-import { Link, useLoaderData } from 'react-router-dom';
-import { getProducts } from '../services/ProductService';
+import { ActionFunctionArgs, Link, useLoaderData } from 'react-router-dom';
+import {
+	getProducts,
+	updateProductAvailability
+} from '../services/ProductService';
 import ProductDetails from '../components/ProductDetails';
 import { Product } from '../types';
+
+export async function action({ request }: ActionFunctionArgs) {
+	const { id } = Object.fromEntries(await request.formData());
+	await updateProductAvailability(Number(id));
+	return {};
+}
 
 export async function loader() {
 	const products = await getProducts();
@@ -37,7 +46,7 @@ export default function Products() {
 					</thead>
 					<tbody>
 						{products.map(product => (
-							<ProductDetails 
+							<ProductDetails
 								key={product.id}
 								product={product}
 							/>
